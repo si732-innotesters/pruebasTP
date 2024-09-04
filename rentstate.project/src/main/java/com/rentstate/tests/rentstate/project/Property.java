@@ -66,23 +66,88 @@ public class Property {
         return available;
     }
     
-   
-
-    public static boolean hasMoreThanThreeProperties(User user, List<Property> properties) {
-        int count = 0;
-        for (Property property : properties) {
-            if (property.getAuthor().equals(user)) {
-                count++;
-            }
-        }
-        if (count > 3) {
-            System.out.println("Revisar al usuario: " + user.getName());
-            return true;
-        }
-        return false;
+    public String getName() {
+        return name;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public static boolean hasDuplicateProperties(User user, List<Property> properties) {
+        for (int i = 0; i < properties.size(); i++) {
+            Property property1 = properties.get(i);
+            if (property1.getAuthor().equals(user)) {
+                for (int j = i + 1; j < properties.size(); j++) {
+                    Property property2 = properties.get(j);
+                    if (property2.getAuthor().equals(user) &&
+                        property1.getName().equals(property2.getName()) &&
+                        property1.getDescription().equals(property2.getDescription()) &&
+                        property1.getLocation().equals(property2.getLocation())) {
+                        System.out.println("Revisar al usuario autor: " + user.getName());
+                        return true;  
+                    }
+                }
+            }
+        }
+        return false;  
+    }
+    
+    public static boolean renterHasFundsForPropertyRent(User renter, Property property) {
+        double propertyPrice = property.getPrice();
+        double discountFactor = 1;
+        
+        if (renter.getIsPremium()) {
+        	discountFactor = 0.70;
+        }
+        System.out.println(discountFactor);
+        double finalPrice = propertyPrice * discountFactor;
+
+        System.out.println(finalPrice);
+        if (renter.getMoney() >= finalPrice) {
+            System.out.println(renter.getName() + " tiene suficiente dinero para alquilar la propiedad.");
+            return true;
+        } else {
+            System.out.println(renter.getName() + " no tiene suficiente dinero para alquilar la propiedad.");
+            return false;
+        }
+    }
+
+    
    
+    public boolean rentProperty(User newRenter,boolean availableProperty) {
+        if (!availableProperty) {
+            System.out.println("No se puede alquilar la propiedad porque no está disponible para alquilar.");
+            return false;
+        }
+
+        if (!hasSufficientFunds(newRenter)) {
+            System.out.println("El inquilino no tiene fondos suficientes para alquilar la propiedad.");
+            return false;
+        }
+
+        this.renter = newRenter;
+        this.available = false;
+        System.out.println("La propiedad ha sido alquilada a " + newRenter.getName() + ".");
+        return true;
+    }
+
+    public boolean canRentProperty() {
+        return checkRentStatus(this.isPosted, this.available);
+    }
+
+    private boolean hasSufficientFunds(User renter) {
+        return renterHasFundsForPropertyRent(renter, this);
+    }
+    
+    public void setAvailable(boolean available) {
+    	this.available=available;
+    }
+    
     public double getPrice() {
         return price;
     }
@@ -104,26 +169,5 @@ public class Property {
     public void setRenter(User renter) {
     	this.renter=renter;
     }
-    public void applyDiscountToProperty() {
-        if (renter.getIsPremium()) {
-            double discount = this.price * 0.30; 
-            this.price -= discount;
-            System.out.println("Se ha aplicado un descuento a la propiedad. Nuevo precio: " + this.price);
-        }
-    }
-    public boolean rentProperty() {
-        if (checkRentStatus(this.isPosted, this.available)) { // Verifica si la propiedad está publicada y disponible
-            if (renter.canRentProperty(this.price)) { // Verifica si el inquilino tiene suficiente dinero
-                if (renter.getIsPremium()) {
-                    this.applyDiscountToProperty(); // Aplica el descuento si el inquilino es premium
-                }
-                return true;
-            }
-        }
-        return false;
-    }
-
-
-
-   
+  
 }
