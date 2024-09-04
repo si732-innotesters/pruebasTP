@@ -9,13 +9,15 @@ public class User {
     private double money;
     
     public User() {
-    	isPremium=true;
+    	this.name="default";
     }
 
-    public User(String name, boolean isPremium) {
+    public User(String name, boolean isPremium, double money) {
         this.name = name;
         this.isPremium = isPremium;
+        this.money = money; 
     }
+
 
     public String getName() {
         return name;
@@ -37,32 +39,6 @@ public class User {
     }
     public double getMoney() {
     	return money;
-    }
-    
-    public User(String name, Boolean premium, double money) {
-    	this.name = name;
-    	this.isPremium = premium;
-    	this.money =money;
-    }
-
-    public boolean canRentProperty(double propertyMoney) {
-   
-        if (this.getMoney() > propertyMoney) {
-            System.out.println("El usuario cuenta con el dinero suficiente para la vivienda");
-            return true;
-        }
-        else {
-            System.out.println("El usuario no cuenta con el dinero suficiente para la vivienda, solo cuenta con" + this.getMoney() + " mientras que la vivienda cuesta: $" + propertyMoney);
-            return false;
-        }
-
-    }
-    
-    public double descuentoPremium(double propertyPrice) {
-        if (this.getIsPremium()) {
-            return propertyPrice * 0.30; 
-        }
-        return 0;
     }
 
 }
